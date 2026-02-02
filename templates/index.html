@@ -1,13 +1,47 @@
 {% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
 
-{% block title %}My Tasks - TodoDash{% endblock %}
-{% block header_title %}Daily Tasks{% endblock %}
-
+{% block header_title %}Overview{% endblock %}
 {% block content %}
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-        <p class="text-sm text-gray-500 uppercase font-bold">Pending</p>
-        <p class="text-3xl font-bold">12</p>
-    </div>
-    </div>
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden" x-data="{ openTask: null }">
+    <table class="w-full text-left border-collapse">
+        <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+                <th class="px-6 py-4 text-sm font-semibold text-gray-600">Task</th>
+                <th class="px-6 py-4 text-sm font-semibold text-gray-600">Created</th>
+                <th class="px-6 py-4 text-sm font-semibold text-gray-600">Deadline</th>
+                <th class="px-6 py-4 text-sm font-semibold text-gray-600">Time Left</th>
+                <th class="px-6 py-4 text-sm font-semibold text-gray-600">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+            <tr class="hover:bg-gray-50 transition">
+                <td class="px-6 py-4">
+                    <button @click="openTask = 'Fix UI Bugs'" class="text-indigo-600 font-medium hover:underline text-left">
+                        Fix Navigation UI Bugs
+                    </button>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500">2026-02-01</td>
+                <td class="px-6 py-4 text-sm text-gray-500">2026-02-05</td>
+                <td class="px-6 py-4 text-sm"><span class="px-2 py-1 bg-amber-100 text-amber-700 rounded text-xs font-bold">3 Days</span></td>
+                <td class="px-6 py-4 space-x-2">
+                    <button class="text-blue-500 hover:text-blue-700"><i class="ph ph-pencil-simple"></i></button>
+                    <button class="text-red-500 hover:text-red-700"><i class="ph ph-trash"></i></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <template x-if="openTask">
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div class="bg-white p-8 rounded-xl max-w-md w-full shadow-2xl mx-4">
+                <h3 class="text-xl font-bold mb-4" x-text="openTask"></h3>
+                <p class="text-gray-600 mb-6">This is a hardcoded description for the task. You'll eventually pass this from your database!</p>
+                <button @click="openTask = null" class="w-full bg-gray-100 py-2 rounded-lg font-bold hover:bg-gray-200">Close</button>
+            </div>
+        </div>
+    </template>
+</div>
+
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 {% endblock %}
