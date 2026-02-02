@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
+
 <body class="bg-gray-50 text-gray-900 font-sans">
 
     <div class="flex h-screen overflow-hidden">
@@ -16,22 +18,26 @@
                     <i class="ph ph-check-square-offset"></i> TodoDash
                 </h1>
             </div>
-            
+
             <nav class="flex-1 px-4 space-y-2">
-                <a href="/" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition">
+                <a href="/"
+                    class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition">
                     <i class="ph ph-house text-xl"></i> Dashboard
                 </a>
-                <a href="/tasks" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition">
+                <a href="/tasks"
+                    class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition">
                     <i class="ph ph-list-checks text-xl"></i> My Tasks
                 </a>
-                <a href="/calendar" class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition">
+                <a href="/calendar"
+                    class="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition">
                     <i class="ph ph-calendar-blank text-xl"></i> Calendar
                 </a>
             </nav>
 
             <div class="p-4 border-t border-gray-100">
                 <div class="flex items-center gap-3 px-2">
-                    <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">
+                    <div
+                        class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">
                         U
                     </div>
                     <span class="text-sm font-medium">User Name</span>
@@ -45,15 +51,42 @@
                     {% block header_title %}{% endblock %}
                 </h2>
                 <div class="flex items-center gap-4">
-                    <button class="p-2 text-gray-400 hover:text-indigo-600 transition">
-                        <i class="ph ph-bell text-2xl"></i>
-                    </button>
-                    <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
-                        + New Task
-                    </button>
+                    <div class="flex-1 max-w-md mx-8">
+                        <form action="/" method="GET" class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                <i class="ph ph-magnifying-glass"></i>
+                            </span>
+                            <input type="text" name="search" placeholder="Search tasks..."
+                                class="w-full pl-10 pr-4 py-2 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition text-sm"
+                                value="{{ request.args.get('search', '') }}">
+                        </form>
+                    </div>
                 </div>
             </header>
+            <div class="px-8 mt-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
+                    x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0"
+                    class="flex items-center justify-between p-4 mb-4 rounded-lg border 
+                            {% if category == 'success' %} bg-emerald-50 border-emerald-200 text-emerald-800 {% else %} bg-red-50 border-red-200 text-red-800 {% endif %}">
 
+                    <div class="flex items-center gap-3">
+                        <i
+                            class="ph {% if category == 'success' %}ph-check-circle{% else %}ph-warning-circle{% endif %} text-xl"></i>
+                        <span class="font-medium">{{ message }}</span>
+                    </div>
+
+                    <button @click="show = false" class="hover:opacity-70">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
             <section class="flex-1 overflow-y-auto p-8">
                 {% block content %}
                 {% endblock %}
@@ -62,4 +95,5 @@
     </div>
 
 </body>
+
 </html>
