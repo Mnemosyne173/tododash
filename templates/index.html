@@ -36,23 +36,21 @@
                     </span>
                 </td>
                 <td class="px-6 py-4 space-x-3">
-                    <button
-                        @click="editingTask = { id: '{{ task.id }}', name: '{{ task.content }}', desc: '{{ task.description }}', deadline: '{{ task.deadline.strftime('%Y-%m-%d') if task.deadline }}' }"
-                        class="text-purple-600 hover:text-purple-800 transition">
+                    <a href="/delete/{{ task.id }}" class="text-blue-500 hover:text-purple-700 transition">
                         <i class="ph ph-pencil-simple text-xl"></i>
-                    </button>
+                    </a>
                     <a href="/delete/{{ task.id }}" class="text-red-500 hover:text-red-700 transition">
                         <i class="ph ph-trash text-xl"></i>
                     </a>
                 </td>
             </tr>
             {% else %}
-            <tr>
-                <td colspan="5" class="px-6 py-12 text-center text-gray-400">
-                    <i class="ph ph-ghost text-4xl mb-2"></i>
-                    <p>No tasks found. Try a different search!</p>
-                </td>
-            </tr>
+        <tr>
+            <td colspan="5" class="px-6 py-12 text-center text-gray-400">
+                <i class="ph ph-ghost text-4xl mb-2"></i>
+                <p>No tasks found. Try a different search!</p>
+            </td>
+        </tr>
             {% endfor %}
         </tbody>
 
@@ -63,46 +61,6 @@
                     <p class="text-gray-600 mb-6" x-text="openTask.desc"></p>
                     <button @click="openTask = null"
                         class="w-full bg-gray-100 py-2 rounded-lg font-bold hover:bg-gray-200">Close</button>
-                </div>
-            </div>
-        </template>
-
-        <template x-if="editingTask">
-            <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full overflow-hidden"
-                    @click.away="editingTask = null">
-                    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                        <h3 class="text-lg font-bold">Edit Task</h3>
-                        <button @click="editingTask = null" class="text-gray-400 hover:text-gray-600">
-                            <i class="ph ph-x text-xl"></i>
-                        </button>
-                    </div>
-
-                    <form :action="'/update/' + editingTask.id" method="POST" class="p-6 space-y-4">
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Task Name</label>
-                            <input type="text" name="name" x-model="editingTask.name"
-                                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Deadline</label>
-                            <input type="date" name="deadline" x-model="editingTask.deadline"
-                                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Description</label>
-                            <textarea name="description" x-model="editingTask.desc" rows="3"
-                                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"></textarea>
-                        </div>
-
-                        <div class="flex gap-3 pt-4">
-                            <button type="button" @click="editingTask = null"
-                                class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200">Cancel</button>
-                            <button type="submit"
-                                class="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 shadow-lg shadow-purple-200">Save
-                                Changes</button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </template>

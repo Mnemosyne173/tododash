@@ -1,28 +1,51 @@
 {% extends "base.html" %}
-{% block title %}Calendar{% endblock %}
-{% block header_title %}Calendar - February 2026{% endblock %}
-
 {% block content %}
-<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-    <div class="grid grid-cols-7 border-b border-gray-200">
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="p-6 border-b flex justify-between items-center">
+        <h2 class="text-2xl font-bold text-gray-800">{{ month_name }} {{ year }}</h2>
+        <div class="flex gap-2">
+            {# Simple logic to calculate prev/next month #}
+            <a href="/calendar?month={{ 12 if month_num == 1 else month_num - 1 }}&year={{ year - 1 if month_num == 1 else year }}"
+                class="p-2 hover:bg-gray-100 rounded-lg">
+                <i class="ph ph-caret-left"></i>
+            </a>
+            <a href="/calendar?month={{ 1 if month_num == 12 else month_num + 1 }}&year={{ year + 1 if month_num == 12 else year }}"
+                class="p-2 hover:bg-gray-100 rounded-lg">
+                <i class="ph ph-caret-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-7 bg-gray-50 border-b">
         {% for day in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] %}
-        <div class="py-3 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">{{ day }}</div>
+            <div class="py-3 text-center text-xs font-bold uppercase text-gray-400 tracking-widest">
+                {{ day }}
+            </div>
         {% endfor %}
     </div>
 
-    <div class="grid grid-cols-7 grid-rows-5 h-[600px]">
-        <div class="border-r border-b border-gray-100 bg-gray-50/50"></div>
-        
-        {% for day in range(1, 29) %}
-        <div class="border-r border-b border-gray-100 p-2 hover:bg-indigo-50/30 transition group relative">
-            <span class="text-sm font-medium text-gray-500">{{ day }}</span>
-            
-            {% if day == 5 or day == 12 %}
-            <div class="mt-1 bg-indigo-600 text-white text-[10px] px-2 py-1 rounded truncate shadow-sm">
-                Fix UI Bugs
-            </div>
-            {% endif %}
-        </div>
+    <div class="grid grid-cols-7 divide-x divide-y divide-gray-100">
+        {% for week in days %}
+            {% for day in week %}
+                <div class="min-h-[120px] p-2 bg-white hover:bg-gray-50 transition relative">
+                    {% if day != 0 %}
+                        <span class="text-sm font-semibold {{ 'text-indigo-600' if day == now.day else 'text-gray-700' }}">
+                            {{ day }}
+                        </span>
+                        
+                        <div class="mt-2 space-y-1">
+                            {% for task in tasks %}
+                                {% if task.deadline.day == day %}
+                                    <div class="px-2 py-1 bg-purple-100 text-purple-700 text-[10px] rounded truncate border border-purple-200"
+                                         title="{{ task.content }}">
+                                        {{ task.content }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
         {% endfor %}
     </div>
 </div>

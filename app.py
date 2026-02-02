@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, request, flash
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, date, timedelta
+import calendar
 
 app = Flask(__name__)
 app.secret_key = 'your_super_secret_key_here' # required for flashing?
@@ -25,7 +26,7 @@ class Todo(db.Model):
         return "No deadline"
 
     def __repr__(self):
-        return '<Task %r>' % self.id
+        return '<Todo %r>' % self.id
 
 # Create the database within the app context
 with app.app_context():
@@ -44,7 +45,34 @@ def dashboard():
 
 @app.route('/calendar')
 def calender():
-    return render_template('calendar.html')
+    # Use URL parameters for month/year, or default to current
+    year = int(request.args.get('year', datetime.now().year))
+    month = int(request.args.get('month', datetime.now().month))
+    
+    # Calculate start and end of the month for the DB query
+    start_date = date(year, month, 1)
+    if month == 12:
+        end_date = date(year + 1, 1, 1)
+    else:
+        end_date = date(year, month + 1, 1)
+
+    # Filter tasks that fall within this specific month
+    tasks = Todo.query.filter(
+        Todo.deadline >= start_date,
+        Todo.deadline < end_date
+    ).all()
+
+    # Calendar logic
+    cal = calendar.Calendar(firstweekday=6)
+    month_days = cal.monthdayscalendar(year, month)
+    
+    return render_template('calendar.html', 
+                           days=month_days, 
+                           year=year, 
+                           month_num=month,
+                           month_name=calendar.month_name[month],
+                           tasks=tasks,
+                           now=datetime.now())
 
 @app.route('/tasks', methods=['POST', 'GET'])
 def addTask():
@@ -66,7 +94,7 @@ def addTask():
         try:
             db.session.add(new_task)
             db.session.commit()
-            flash("Task added successfully")
+            flash("Todo added successfully")
             return redirect('/') 
         except Exception as e:
             print(f"Error: {e}")
