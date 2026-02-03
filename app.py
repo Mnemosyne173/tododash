@@ -130,4 +130,4 @@ def update(id):
         return "Could not update task."
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
